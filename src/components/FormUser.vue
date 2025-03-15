@@ -10,6 +10,7 @@
             id="firstName"
             v-model.trim="formUser.firstName"
             required
+            
             @input="validateFirstName"
           />
           <span v-if="errors.firstName" class="error"
@@ -22,8 +23,9 @@
           Фамилия
           <input
             id="lastName"
-            v-model="formUser.lastName"
+            v-model.trim="formUser.lastName"
             type="text"
+            required
             @input="validateLastName"
           />
         </label>
@@ -34,9 +36,10 @@
           Телефон
           <input
             id="phone"
-            v-model="formUser.phone"
+            v-model.trim="formUser.phone"
             type="text"
             @input="validatePhone"
+            required
           />
         </label>
         <span v-if="errors.phone" class="error">{{ errors.phone }} </span>
@@ -46,8 +49,9 @@
           E-mail
           <input
             id="email"
-            v-model="formUser.email"
+            v-model.trim="formUser.email"
             type="text"
+            required
             @input="validateEmail"
           />
           <span v-if="errors.email" class="error">{{ errors.email }} </span>
@@ -58,8 +62,9 @@
           Пароль
           <input
             id="password"
-            v-model="formUser.password"
+            v-model.trim="formUser.password"
             type="text"
+            required
             @input="validatePassword"
           />
           <span v-if="errors.password" class="error"
@@ -72,8 +77,9 @@
           Повторите пароль
           <input
             id="repeatPassword"
-            v-model="formUser.repeatPassword"
+            v-model.trim="formUser.repeatPassword"
             type="text"
+            required
             @input="validateRepeatPassword"
           />
           <span v-if="errors.repeatPassword" class="error"
@@ -90,7 +96,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref } from 'vue';
+import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
 
 interface FormData {
   firstName: string;
