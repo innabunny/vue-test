@@ -10,7 +10,6 @@
             id="firstName"
             v-model.trim="formUser.firstName"
             required
-            
             @input="validateFirstName"
           />
           <span v-if="errors.firstName" class="error"
@@ -87,7 +86,7 @@
           </span>
         </label>
       </div>
-      <button :disabled="!isFormValid">Отправить</button>
+      <button :disabled="!isFormValid || isSubmitDisabled">Отправить</button>
     </form>
     <div v-if="responseMessage" class="response-message">
       {{ responseMessage }}
@@ -119,7 +118,7 @@ interface Errors {
 export default defineComponent({
   name: 'FormUser',
   setup() {
-    const formUser = ref<FormData>({
+    const formUser = reactive<FormData>({
       firstName: '',
       lastName: '',
       phone: '',
@@ -132,9 +131,9 @@ export default defineComponent({
     const responseMessage = ref<string>('');
 
     const validateFirstName = () => {
-      if (formUser.value.firstName.length < 3) {
+      if (formUser.firstName.length < 3) {
         errors.firstName = 'Имя  должно содержать больше 3 символов';
-      } else if (formUser.value.firstName.length > 30) {
+      } else if (formUser.firstName.length > 30) {
         errors.firstName = 'Имя должно содержать меньше 30 символов';
       } else {
         console.log('err');
@@ -143,9 +142,9 @@ export default defineComponent({
     };
 
     const validateLastName = () => {
-      if (formUser.value.lastName.length < 3) {
+      if (formUser.lastName.length < 3) {
         errors.lastName = 'Фамилия должна содержать больше 3 символов';
-      } else if (formUser.value.lastName.length > 30) {
+      } else if (formUser.lastName.length > 30) {
         errors.lastName = 'Фамилия должна содержать меньше 30 символов';
       } else {
         delete errors.lastName;
@@ -154,7 +153,7 @@ export default defineComponent({
 
     const validatePhone = () => {
       const phoneRegex = /^[0-9]+$/;
-      if (!phoneRegex.test(formUser.value.phone)) {
+      if (!phoneRegex.test(formUser.phone)) {
         errors.phone = 'Номер телефона должен содержать только цифры';
       } else {
         delete errors.phone;
@@ -163,7 +162,7 @@ export default defineComponent({
 
     const validateEmail = () => {
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(formUser.value.email)) {
+      if (!emailPattern.test(formUser.email)) {
         errors.email = 'Введите корректный email';
       } else {
         delete errors.email;
@@ -171,7 +170,7 @@ export default defineComponent({
     };
 
     const validatePassword = () => {
-      if (formUser.value.password.length < 6) {
+      if (formUser.password.length < 6) {
         errors.password = 'Пароль должен содержать не менее 6 символов';
       } else {
         delete errors.password;
@@ -179,12 +178,16 @@ export default defineComponent({
     };
 
     const validateRepeatPassword = () => {
-      if (formUser.value.password !== formUser.value.repeatPassword) {
+      if (formUser.password !== formUser.repeatPassword) {
         errors.repeatPassword = 'Пароли не совпадают';
       } else {
         delete errors.repeatPassword;
       }
     };
+
+    const isSubmitDisabled = computed(() => {
+      return Object.values(formUser).some((value) => value.trim() === '');
+    });
 
     const isFormValid = computed(() => {
       return Object.keys(errors).length === 0;
@@ -208,6 +211,7 @@ export default defineComponent({
       errors,
       isFormValid,
       responseMessage,
+      isSubmitDisabled,
     };
   },
 });
